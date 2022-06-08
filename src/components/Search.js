@@ -7,19 +7,30 @@ const Search = () => {
 
   useEffect(() => {
     const search = async () => {
-      const { data } = await axios.get("https://en.wikipedio.org/w/api.php", {
+      const { data } = await axios.get("https://en.wikipedia.org/w/api.php", {
         params: {
           action: "query",
           list: "search",
-          origin: "*",
           format: "json",
+          origin: "*",
           srsearch: term,
         },
       });
-      setResults(data);
+      setResults(data.query.search);
     };
     search();
   }, [term]);
+
+  const renderedResults = results.map((result) => {
+    return (
+      <div className="item" key={result.pageid}>
+        <div className="content"></div>
+        <div className="header">{result.title}</div>
+        // allow xsxx atack scripting atack
+        <span dangerouslySetInnerHTML={{ __html: result.snippet }}></span>
+      </div>
+    );
+  });
 
   return (
     <div>
@@ -34,6 +45,7 @@ const Search = () => {
           />
         </div>
       </div>
+      <div className="ui celled list">{renderedResults}</div>
     </div>
   );
 };
